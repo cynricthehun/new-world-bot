@@ -64,21 +64,20 @@ def set_regions():
     ]
 
 
-def found_cast_text():
-    screen_cap = ImageGrab.grab(bbox=tuple(HOLD_TEXT_REGION))
+def check_ready_to_fish():
+    f3_file_path = os.path.join(
+        DIR, "external_resources", "image_references", "f3.PNG"
+    )
+    found = pyautogui.locateCenterOnScreen(f3_file_path, region=tuple(HOLD_TEXT_REGION), grayscale=True, confidence = CONFIDENCE)
     #FIXME: Relative pixels
-    hold_text = screen_cap.getpixel((137, 90))
-    if hold_text == HOLD_COLOR_TEXT_WHITE:
+    if found:
         return True
     else:
         return False
 
 def check_for_pole():
-    screen_cap = ImageGrab.grab(bbox=tuple(HOLD_TEXT_REGION))
-    #FIXME: Relative pixels
-    hold_text = screen_cap.getpixel((137, 90))
     # Check screen for fishing pole help text.
-    if hold_text == HOLD_COLOR_TEXT_WHITE:
+    if check_ready_to_fish():
         print("Fishing pole is equiped!")
     else:
         print("Equipping fishing pole...")
@@ -117,17 +116,18 @@ def hook_fish():
 def reel_fish():
     time.sleep(1)
     reeling = True
-    tension_file_path = os.path.join(DIR, "external_resources", "image_references", "green_tension.PNG")
+    tension_file_path = os.path.join(DIR, "external_resources", "image_references", "orange_tension.PNG")
     while reeling == True:
-        while pyautogui.locateCenterOnScreen(tension_file_path, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.7) is not None:
+        while pyautogui.locateCenterOnScreen(tension_file_path, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.7) is None:
             pyautogui.mouseDown()
         pyautogui.mouseUp()
-        time.sleep(0.5)
+        time.sleep(1.5)
 
         # Check Caught
         #FIXME: Relative pixel
-        if found_cast_text == True:
+        if check_ready_to_fish():
             reeling = False
+            print("Caught!!!")
             time.sleep(3)
 
 
@@ -140,8 +140,8 @@ def main():
         if keyboard.is_pressed("s"):
             botting = True
 
-        check_for_pole()
         while botting == True:
+            check_for_pole()
             fishing = True
             while fishing:
                 cast()
