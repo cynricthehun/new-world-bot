@@ -54,7 +54,8 @@ def test_regions():
     top_y = (COLUMN_HEIGHT*1)
     bottom_x = (COLUMN_WIDTH*8)
     bottom_y = (COLUMN_HEIGHT*12)
-    screen_cap = ImageGrab.grab(bbox=(top_x, top_y, bottom_x, bottom_y))
+    screen_cap = ImageGrab.grab(bbox=HOLD_TEXT_AREA)
+    screen_cap.save('C:/Users/Gluttony/Pictures/testimage2.png')
     screen_cap.show()
 
 def main():
@@ -131,7 +132,7 @@ def main():
 
                     # Determine if ready to restart fishing.
                     screen_cap = ImageGrab.grab(bbox=tuple(HOLD_TEXT_AREA))
-                    hold_text = screen_cap.getpixel((88,30))
+                    hold_text = screen_cap.getpixel((137,90))
                     if hold_text == HOLD_COLOR_TEXT_WHITE:
                         reeling = False
 
