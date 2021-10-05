@@ -129,11 +129,11 @@ def main():
 
                     # Check to see if the hold/release icon isn't present.
 
-                # Determine if ready to restart fishing.
-                screen_cap = ImageGrab.grab(bbox=tuple(HOLD_TEXT_AREA))
-                hold_text = screen_cap.getpixel((88,30))
-                if hold_text == HOLD_COLOR_TEXT_WHITE:
-                    reeling = False
+                    # Determine if ready to restart fishing.
+                    screen_cap = ImageGrab.grab(bbox=tuple(HOLD_TEXT_AREA))
+                    hold_text = screen_cap.getpixel((88,30))
+                    if hold_text == HOLD_COLOR_TEXT_WHITE:
+                        reeling = False
 
                 print('GRATS ON THE BIG FISH!')
                 #Loop while reeling fish in
