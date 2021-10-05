@@ -1,4 +1,5 @@
-ctypes
-keyboard
 pillow
 pyautogui
+ctypes
+keyboard
+opencv-python
