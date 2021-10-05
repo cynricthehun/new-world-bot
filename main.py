@@ -12,9 +12,9 @@ DIR = os.path.abspath(os.path.dirname(__file__))
 HOLD_COLOR_TEXT_WHITE = (252, 252, 252)
 
 # Box Regions
-HOLD_TEXT_REGION = [0,0,0,0]
-BOBBER_ICON_REGION = [0,0,0,0]
-FAILED_FISHING_MESSAGE_REGION = [0,0,0,0]
+HOLD_TEXT_REGION = [0, 0, 0, 0]
+BOBBER_ICON_REGION = [0, 0, 0, 0]
+FAILED_FISHING_MESSAGE_REGION = [0, 0, 0, 0]
 
 
 # Hardware specific functions
@@ -41,21 +41,39 @@ def set_regions():
 
     column_width = screen_resolution[0] / number_of_columns
     column_height = screen_resolution[1] / number_of_rows
-    
-    HOLD_TEXT_REGION = [int(column_width*6), int(column_height*7), int(column_width*8), int(column_height*9)]
-    BOBBER_ICON_REGION = [int(column_width*4), int(column_height*1), int(column_width*8), int(column_height*12)]
-    FAILED_FISHING_MESSAGE_REGION = [int(column_width*2), int(column_height*8), int(column_width*8), int(column_height*12)]
+
+    HOLD_TEXT_REGION = [
+        int(column_width * 6),
+        int(column_height * 7),
+        int(column_width * 8),
+        int(column_height * 9),
+    ]
+    BOBBER_ICON_REGION = [
+        int(column_width * 4),
+        int(column_height * 1),
+        int(column_width * 8),
+        int(column_height * 12),
+    ]
+    FAILED_FISHING_MESSAGE_REGION = [
+        int(column_width * 2),
+        int(column_height * 8),
+        int(column_width * 8),
+        int(column_height * 12),
+    ]
 
 
 def check_for_pole():
     screen_cap = ImageGrab.grab(bbox=tuple(HOLD_TEXT_REGION))
     screen_cap.show()
-    hold_text = screen_cap.getpixel((88,30))
-        #Check screen for fishing pole help text.
+    #FIXME: Relative pixels
+    hold_text = screen_cap.getpixel((88, 30))
+    # Check screen for fishing pole help text.
     if hold_text == HOLD_COLOR_TEXT_WHITE:
         print("Fishing pole is equiped!")
     else:
-        print("Fishing pole isn't equiped!")
+        print("Equipping fishing pole...")
+        pyautogui.press('f3')
+        sleep(1.5)
 
 
 def cast():
@@ -68,13 +86,15 @@ def cast():
 
 
 def wait_for_bite():
-    bobber_file_path = os.path.join(DIR, "external_resources", "image_references", "bobber.PNG")
+    bobber_file_path = os.path.join(
+        DIR, "external_resources", "image_references", "bobber.PNG"
+    )
 
     while pyautogui.locateCenterOnScreen(bobber_file_path, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.7) is not None:
         print('Waiting on fish...')
         time.sleep(0.15)
 
-    print('Fish ON!')
+    print("Fish ON!")
 
 
 def hook_fish():
@@ -87,15 +107,27 @@ def hook_fish():
 def reel_fish():
     time.sleep(1)
     reeling = True
+    tension_file_path = os.path.join(DIR, "external_resources", "image_references", "green_tension.PNG")
     while reeling == True:
-        pyautogui.mouseDown()
-        time.sleep(1)
+        while pyautogui.locateCenterOnScreen(tension_file_path, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.7) is not None:
+            pyautogui.mouseDown()
         pyautogui.mouseUp()
-        time.sleep(0.35)
-        screen_cap = ImageGrab.grab(bbox = (center_screen[0] + 50, center_screen[1] + 150, center_screen[0] + 300, center_screen[1] + 300))
-        hold_text = screen_cap.getpixel((88,30))
+        time.sleep(0.5)
+
+        # Check Caught
+        screen_cap = ImageGrab.grab(
+            bbox=(
+                center_screen[0] + 50,
+                center_screen[1] + 150,
+                center_screen[0] + 300,
+                center_screen[1] + 300,
+            )
+        )
+        #FIXME: Relative pixel
+        hold_text = screen_cap.getpixel((88, 30))
         if hold_text == HOLD_TEXT_AREA:
             reeling = False
+            sleep(3)
 
 
 def main():
@@ -105,51 +137,24 @@ def main():
     botting = False
 
     while True:
-        if keyboard.is_pressed('s'):
+        if keyboard.is_pressed("s"):
             botting = True
+
+        check_for_pole()
         while botting == True:
-            check_for_pole()
-            #Determine if fishing pole is equiped
-                #Capture screen
-            
-            #TODO: Remove screen capture save debug code.
-            #screen_cap.save('C:/Users/Gluttony/Pictures/thefile.jpg')
-            #TODO: Remove screen capture display debug code.
-            #screen_cap.show()
-            #Cast after pole check
-                #Right click on screen
-                #TODO: Add click variation to disguise botting. (introduce RNG)
             fishing = True
             while fishing:
                 cast()
                 wait_for_bite()
                 hook_fish()
                 reel_fish()
-                
 
-                    # Check to see if the hold/release icon isn't present.
+                print("GRATS ON THE BIG FISH!")
 
-                # Determine if ready to restart fishing.
-                
-
-                print('GRATS ON THE BIG FISH!')
-                #Loop while reeling fish in
-                # check line for stress
-                # delay if stressed
-                # reel if not. 
-                #while pyautogui.locateCenterOnScreen('F:/Projects/New World/Autofishing/external_resources/image_references/bobber.PNG', region=(bobber_icon_position[0] - 50, bobber_icon_position[1] -50, bobber_icon_position[0] + 50, bobber_icon_position[1] + 500)) is not None:
-                
-                #fishing = False
-
-                #fishing_bobber_screen_capture.show()
-
-                if keyboard.is_pressed('e'):
+                if keyboard.is_pressed("e"):
                     fishing = False
-                    botting = False        
-                
-            #Reel fish in
-                #maintain line strength
+                    botting = False
+
 
 if __name__ == "__main__":
     main()
-    #test_regions()
