@@ -66,7 +66,6 @@ def check_ready_to_fish():
         DIR, "external_resources", "image_references", "f3.PNG"
     )
     found = pyautogui.locateCenterOnScreen(f3_file_path, region=tuple(HOLD_TEXT_REGION), grayscale=True, confidence = CONFIDENCE)
-    print(found)
     if found:
         return True
     else:
