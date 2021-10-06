@@ -8,9 +8,6 @@ from ctypes import *
 
 DIR = os.path.abspath(os.path.dirname(__file__))
 
-# Colors
-HOLD_COLOR_TEXT_WHITE = (252, 252, 252)
-
 # Box Regions
 HOLD_TEXT_REGION = [0, 0, 0, 0]
 BOBBER_ICON_REGION = [0, 0, 0, 0]
