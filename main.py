@@ -42,10 +42,10 @@ def set_regions():
     column_height = screen_resolution[1] / number_of_rows
 
     HOLD_TEXT_REGION = [
-        int(column_width * 6),
-        int(column_height * 7),
-        int(column_width * 8),
-        int(column_height * 9),
+        int(column_width * 6),#X1
+        int(column_height * 6),#Y1
+        int(column_width * 8),#X2
+        int(column_height * 10),#Y2
     ]
     BOBBER_ICON_REGION = [
         int(column_width * 4),
@@ -66,7 +66,7 @@ def check_ready_to_fish():
         DIR, "external_resources", "image_references", "f3.PNG"
     )
     found = pyautogui.locateCenterOnScreen(f3_file_path, region=tuple(HOLD_TEXT_REGION), grayscale=True, confidence = CONFIDENCE)
-    #FIXME: Relative pixels
+    print(found)
     if found:
         return True
     else:
@@ -115,10 +115,16 @@ def reel_fish():
     reeling = True
     tension_file_path = os.path.join(DIR, "external_resources", "image_references", "orange_tension.PNG")
     while reeling == True:
-        while pyautogui.locateCenterOnScreen(tension_file_path, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.7) is None:
+        while pyautogui.locateCenterOnScreen(tension_file_path, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.8) is None:
             pyautogui.mouseDown()
+            if check_ready_to_fish():
+                reeling = False
+                print("Caught!!!")
+                break
+            time.sleep(0.25)
         pyautogui.mouseUp()
-        time.sleep(1.5)
+        time.sleep(0.25)
+
 
         # Check Caught
         #FIXME: Relative pixel
