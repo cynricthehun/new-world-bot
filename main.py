@@ -1,7 +1,10 @@
 import os
 import time
+from PIL.ImageOps import grayscale
+from numpy import e
 import pyautogui
 import keyboard
+import cv2
 from PIL import ImageGrab, Image, ImageDraw
 from ctypes import *
 
@@ -33,6 +36,7 @@ def set_regions():
     global HOLD_TEXT_REGION
     global BOBBER_ICON_REGION
     global FAILED_FISHING_MESSAGE_REGION
+    global REPAIR_FISHING_POLE_REGION
 
     screen_resolution = get_screen_size()
     number_of_columns = 12
@@ -40,7 +44,12 @@ def set_regions():
 
     column_width = screen_resolution[0] / number_of_columns
     column_height = screen_resolution[1] / number_of_rows
-
+    REPAIR_FISHING_POLE_REGION = [
+        int(column_width * 10),#X1
+        int(column_height * 11),#Y1
+        int(column_width * 12),#X2
+        int(column_height * 12),#Y2
+    ]
     HOLD_TEXT_REGION = [
         int(column_width * 6),#X1
         int(column_height * 6),#Y1
@@ -63,7 +72,7 @@ def set_regions():
 
 def check_ready_to_fish():
     f3_file_path = os.path.join(
-        DIR, "external_resources", "image_references", "f3.PNG"
+        DIR, "external_resources", "image_references", "f3_1440.PNG"
     )
     found = pyautogui.locateCenterOnScreen(f3_file_path, region=tuple(HOLD_TEXT_REGION), grayscale=True, confidence = CONFIDENCE)
     if found:
@@ -83,9 +92,9 @@ def check_for_pole():
 
 def cast():
     print("Casting...")
-    pyautogui.keyUp("b")
+    pyautogui.keyUp("x")
     time.sleep(.5)
-    pyautogui.keyDown("b")
+    pyautogui.keyDown("x")
     pyautogui.mouseDown()
     # Wait for max
     time.sleep(1.89)
@@ -96,7 +105,7 @@ def cast():
 
 def wait_for_bite():
     bobber_file_path = os.path.join(
-        DIR, "external_resources", "image_references", "bobber.PNG"
+        DIR, "external_resources", "image_references", "bobber_1440.PNG"
     )
 
     while pyautogui.locateCenterOnScreen(bobber_file_path, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = CONFIDENCE) is not None:
@@ -116,10 +125,10 @@ def hook_fish():
 def reel_fish():
     time.sleep(1)
     reeling = True
-    green_tension_img = os.path.join(DIR, "external_resources", "image_references", "green_tension.PNG")
-    slacked_tension_img = os.path.join(DIR, "external_resources", "image_references", "slacked_tension.PNG")
+    green_tension_img = os.path.join(DIR, "external_resources", "image_references", "green_tension_1440.PNG")
+    slacked_tension_img = os.path.join(DIR, "external_resources", "image_references", "slacked_tension_1440.PNG")
     while reeling == True:
-        while (pyautogui.locateCenterOnScreen(green_tension_img, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.8)) or (pyautogui.locateCenterOnScreen(slacked_tension_img, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.8)):
+        while (pyautogui.locateCenterOnScreen(green_tension_img, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.75)) or (pyautogui.locateCenterOnScreen(slacked_tension_img, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.75)):
             pyautogui.mouseDown()
             if check_ready_to_fish():
                 reeling = False
@@ -133,8 +142,40 @@ def reel_fish():
         if check_ready_to_fish():
             reeling = False
             print("Caught!!!")
-            time.sleep(3)
+            time.sleep(1)
 
+def repair_check():
+    #TODO:check dura
+    repair_img = os.path.join(DIR, "external_resources", "image_references", "repair_1440.PNG")
+    if pyautogui.locateOnScreen(repair_img, region=tuple(REPAIR_FISHING_POLE_REGION), grayscale=True, confidence = .7):
+        print("Need to Repair")
+        #TODO:repair
+        #open inventory
+        keyboard.press("tab")
+        time.sleep(.1)
+        keyboard.release("tab")
+        time.sleep(.1)
+        #r+click pole (1160,890) column_width*5.44 column_height*7.42
+        pyautogui.moveTo(1160, 890, .5)
+        keyboard.press("r")
+        time.sleep(.1)
+        pyautogui.mouseDown()
+        time.sleep(.1)
+        pyautogui.mouseUp()
+        time.sleep(.1)
+        keyboard.release("r")
+        time.sleep(.1)
+        #e (confirm repair)
+        keyboard.press("e")
+        time.sleep(.1)
+        keyboard.release("e")
+        #close inventory
+        keyboard.press("tab")
+        time.sleep(.1)
+        keyboard.release("tab")
+        time.sleep(.25)
+        pyautogui.press('f3')
+        time.sleep(.5)
 
 def main():
     set_regions()
@@ -142,19 +183,21 @@ def main():
     botting = False
 
     while True:
-        if keyboard.is_pressed("s"):
+        if keyboard.is_pressed("-"):
             botting = True
 
         while botting == True:
             check_for_pole()
             fishing = True
             while fishing:
+                repair_check()
                 cast()
                 wait_for_bite()
                 hook_fish()
                 reel_fish()
 
                 print("GRATS ON THE BIG FISH!")
+                
 
 
 if __name__ == "__main__":
