@@ -82,9 +82,13 @@ def check_for_pole():
 
 
 def cast():
+    print("Casting...")
+    pyautogui.keyUp("b")
+    time.sleep(.5)
+    pyautogui.keyDown("b")
     pyautogui.mouseDown()
     # Wait for max
-    time.sleep(1.91)
+    time.sleep(1.89)
     pyautogui.mouseUp()
     # Wait for cast animation
     time.sleep(3)
@@ -112,17 +116,16 @@ def hook_fish():
 def reel_fish():
     time.sleep(1)
     reeling = True
-    tension_file_path = os.path.join(DIR, "external_resources", "image_references", "orange_tension.PNG")
+    green_tension_img = os.path.join(DIR, "external_resources", "image_references", "green_tension.PNG")
+    slacked_tension_img = os.path.join(DIR, "external_resources", "image_references", "slacked_tension.PNG")
     while reeling == True:
-        while pyautogui.locateCenterOnScreen(tension_file_path, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.8) is None:
+        while (pyautogui.locateCenterOnScreen(green_tension_img, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.8)) or (pyautogui.locateCenterOnScreen(slacked_tension_img, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.8)):
             pyautogui.mouseDown()
             if check_ready_to_fish():
                 reeling = False
                 print("Caught!!!")
                 break
-            time.sleep(0.25)
         pyautogui.mouseUp()
-        time.sleep(0.25)
 
 
         # Check Caught
@@ -152,10 +155,6 @@ def main():
                 reel_fish()
 
                 print("GRATS ON THE BIG FISH!")
-
-                if keyboard.is_pressed("e"):
-                    fishing = False
-                    botting = False
 
 
 if __name__ == "__main__":
