@@ -4,10 +4,9 @@ from PIL.ImageOps import grayscale
 from numpy import e
 import pyautogui
 import keyboard
-import cv2
 from PIL import ImageGrab, Image, ImageDraw
 from ctypes import *
-
+pyautogui.FAILSAFE = False
 
 DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -128,7 +127,7 @@ def reel_fish():
     green_tension_img = os.path.join(DIR, "external_resources", "image_references", "green_tension_1440.PNG")
     slacked_tension_img = os.path.join(DIR, "external_resources", "image_references", "slacked_tension_1440.PNG")
     while reeling == True:
-        while (pyautogui.locateCenterOnScreen(green_tension_img, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.75)) or (pyautogui.locateCenterOnScreen(slacked_tension_img, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.75)):
+        while (pyautogui.locateCenterOnScreen(green_tension_img, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.8)) or (pyautogui.locateCenterOnScreen(slacked_tension_img, region=tuple(BOBBER_ICON_REGION), grayscale=True, confidence = 0.75)):
             pyautogui.mouseDown()
             if check_ready_to_fish():
                 reeling = False
@@ -173,9 +172,17 @@ def repair_check():
         keyboard.press("tab")
         time.sleep(.1)
         keyboard.release("tab")
-        time.sleep(.25)
+        time.sleep(2)
         pyautogui.press('f3')
         time.sleep(.5)
+def wait_for_ready():
+    f3_file_path = os.path.join(
+        DIR, "external_resources", "image_references", "f3_1440.PNG"
+    )
+    while pyautogui.locateCenterOnScreen(f3_file_path, region=tuple(HOLD_TEXT_REGION), grayscale=True, confidence = CONFIDENCE) is None:
+        print("waiting")
+        time.sleep(.5)
+
 
 def main():
     set_regions()
@@ -195,6 +202,7 @@ def main():
                 wait_for_bite()
                 hook_fish()
                 reel_fish()
+                wait_for_ready()
 
                 print("GRATS ON THE BIG FISH!")
                 
