@@ -1,13 +1,19 @@
 import os
 import pyautogui
 import time
+import keyboard
 
-CAMERA_LOOK_KEY = "b"
+from setup import Setup
+
+CAMERA_LOOK_KEY = "x"
 
 def fishing_loop(configs):
-    fishing = True
-    while fishing:
-        # repair_check()
+    fishing = False
+    while fishing is False:
+        if keyboard.is_pressed("-"):
+            fishing = True
+    while fishing == True:
+        repair_check(configs.repair_img, configs.repair_fishing_pole_region)
         cast()
         wait_for_bite(configs.bobber_img, configs.bobber_region)
         hook_fish()
@@ -94,8 +100,11 @@ def repair_check(repair_img, repair_region):
     # TODO:check dura
 
     if pyautogui.locateOnScreen(
-        repair_img, region=tuple(repair_pole_region), grayscale=True, confidence=0.7
-    ):
+        repair_img,
+        region=tuple(repair_region),
+        grayscale=True,
+        confidence=0.7
+    ) and Setup.screen_resolution[1] == 1440:
         print("Need to Repair")
         # TODO:repair
         # open inventory
