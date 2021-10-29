@@ -59,9 +59,9 @@ class Setup:
         screen_size = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
         return screen_size
 
-    def get_center_of_screen() -> tuple:
+    def get_center_of_screen(self) -> tuple:
         """Returns center pixel coordinates"""
-        screen_size = get_screen_size()
+        screen_size = self.get_screen_size()
         center_screen = (int(screen_size[0] / 2), int(screen_size[1] / 2))
         return center_screen
 

@@ -7,12 +7,13 @@ from setup import Setup
 
 CAMERA_LOOK_KEY = "x"
 
+fishing = False
 def fishing_loop(configs):
-    fishing = False
+    global fishing
     while fishing is False:
         if keyboard.is_pressed("-"):
             fishing = True
-    while fishing == True:
+    while fishing is True:
         repair_check(configs.repair_img, configs.repair_fishing_pole_region)
         cast()
         wait_for_bite(configs.bobber_img, configs.bobber_region)
@@ -51,7 +52,7 @@ def wait_for_bite(bobber_img, bobber_region):
         )
         is not None
     ):
-        print("Waiting on fish...")
+        print("Waiting on fish... ")
         time.sleep(0.15)
 
     print("Fish ON!")
@@ -131,7 +132,7 @@ def repair_check(repair_img, repair_region):
         time.sleep(0.1)
         keyboard.release("tab")
         time.sleep(2)
-        pyautogui.press("f3")
+        keyboard.press("f3")
         time.sleep(0.5)
 
 
@@ -144,3 +145,13 @@ def wait_for_ready(f3_img, hold_text_region):
     ):
         print("Waiting for ready...")
         time.sleep(0.5)
+
+
+def stop():
+    print("press 'q' to stop")
+    global fishing
+    while True:
+        if keyboard.is_pressed("q"):
+            fishing = False
+            print("STOPED")
+            break
